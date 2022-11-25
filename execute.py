@@ -35,7 +35,8 @@ def startexechere ( p ):
 def loadmem():                                       # get binary load image
   curaddr = 0
   for line in open("a.out", 'r').readlines():
-    token = string.split( string.lower( line ))      # first token on each line is mem word, ignore rest
+    line.lower()
+    token = line.split()      # first token on each line is mem word, ignore rest
     if ( token[ 0 ] == 'go' ):
         startexechere(  int( token[ 1 ] ) )
     else:    
@@ -68,11 +69,11 @@ def checkres( v1, v2, res):
       return( 0 )
 def dumpstate ( d ):
     if ( d == 1 ):
-        print reg
+        print(reg)
     elif ( d == 2 ):
-        print mem
+        print(mem)
     elif ( d == 3 ):
-        print 'clock=', clock, 'IC=', ic, 'Coderefs=', numcoderefs,'Datarefs=', numdatarefs, 'Start Time=', starttime, 'Currently=', time.time() 
+        print('clock=', clock, 'IC=', ic, 'Coderefs=', numcoderefs,'Datarefs=', numdatarefs, 'Start Time=', starttime, 'Currently=', time.time())
 def trap ( t ):
     # unusual cases
     # trap 0 illegal instruction
@@ -88,7 +89,7 @@ def trap ( t ):
     elif ( t == 2 ):                          # sys call, reg trapval has a parameter
        what = reg[ trapval ] 
        if ( what == 1 ):
-           a = a        #elapsed time
+           a = t        #elapsed time Not Sure as of Now
     return ( -1, -1 )
     return ( rv, rl )
 # opcode type (1 reg, 2 reg, reg+addr, immed), mnemonic  
@@ -110,8 +111,9 @@ while( 1 ):
    reg2   = (ir >> reg2position) & regmask
    addr   = (ir) & addmask
    ic = ic + 1
+
                                                     # - operand fetch
-   if not (opcodes.has_key( opcode )):
+   if not (opcodes.get(opcode)):
       tval, treg = trap(0) 
       if (tval == -1):                              # illegal instruction
          break
@@ -151,7 +153,7 @@ while( 1 ):
       result = operand2
    elif opcode == 12:                  # conditional branch
       result = operand1
-      if result <> 0:
+      if(result != 0):
          ip = operand2
    elif opcode == 13:                  # branch and link
       result = ip
