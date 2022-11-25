@@ -32,28 +32,56 @@ curaddr = 0                                            # start assembling to loc
 infile = open("in.asm", 'r')
 # Build Symbol Table
 symboltable = {}
+loopCount=0
 for line in infile.readlines():           # read our asm code
-   tokens = line.split( line.lower( ))        # tokens on each line
+   line.lower( )
+   tokens = line.split()        # tokens on each line
    firsttoken = tokens[0]
    print( tokens )
    if firsttoken.isdigit():                             # if line starts with an address
        curaddr = int( tokens[0] )                      # assemble to here
        tokens = tokens[1:]
-   if firsttoken == u';':                                # skip comments
-      continue
-   if firsttoken == u'go':                               # start execution here
+       print("tokens----->")
+       print("LoopCount:-->"+str(loopCount))
+       print(tokens)
+       print("tokens----->")
+       
+   if firsttoken == ';':                                # skip comments
+       print("LoopCount:-->"+str(loopCount))   
+       loopCount+=1
+       continue
+   if firsttoken == 'go':                               # start execution here
+      print("LoopCount:-->"+str(loopCount))
       startexecptr = ( int( tokens[ 1 ] ) & ((2**wordsize)-1))  # data
+      print("startexecptr--->"+str(startexecptr))
+      loopCount+=1
       continue
-   if firsttoken == u'.':
+   if firsttoken == '.count':
+      symboltable[firsttoken] = curaddr
+   if firsttoken == '.vals':
+      symboltable[firsttoken] = curaddr
+   if firsttoken == '.loop':
       symboltable[firsttoken] = curaddr
    curaddr = curaddr + 1
-print( "symbol table" ) 
+   loopCount+=1
+# print( "symbol table" ) 
 print(symboltable)
-print( "end sym table" )
+print("------------------symboltable---END------------------")
+print("------------------symboltable---END------------------")
+print("------------------symboltable---END------------------")
+print("------------------symboltable---END------------------")
+# print( "end sym table" )
+
+
+
+
+loopCount=0
 infile.close()
 infile = open("in.asm", 'r')
 for line in infile.readlines():           # read our asm code
-   tokens = line.split( line.lower( ))        # tokens on each line
+   line.lower()
+   tokens = line.split()        # tokens on each line
+   print( tokens )
    firsttoken = tokens[0]
    if firsttoken.isdigit():                             # if line starts with an address
        curaddr = int( tokens[0] )                      # assemble to here
@@ -63,9 +91,27 @@ for line in infile.readlines():           # read our asm code
    if firsttoken == 'go':                               # start execution here
       startexecptr = ( int( tokens[ 1 ] ) & ((2**wordsize)-1))  # data
       continue
-   if firsttoken == '.':
+   if firsttoken == '.loop':
       symaddr = symboltable[firsttoken]
+      print("----------")
+      print(tokens)
       tokens = tokens[1:]
+      print(tokens)
+      print("----------")
+   if firsttoken == '.count':
+      symaddr = symboltable[firsttoken]
+      print("----------")
+      print(tokens)
+      tokens = tokens[1:]
+      print(tokens)
+      print("----------")
+   if firsttoken == '.vals':
+      symaddr = symboltable[firsttoken]
+      print("----------")
+      print(tokens)
+      tokens = tokens[1:]
+      print(tokens)
+      print("----------")
    memdata = 0                                             # build instruction step by step
    print( "tokens", tokens[0]  )   #DEBUG
    print( "here:", opcodes[ tokens[0] ] )   #DEBUG
@@ -81,7 +127,9 @@ for line in infile.readlines():           # read our asm code
       memdata = memdata + ( regval( tokens[1] ) << reg1position ) + ( regval( tokens[2] ) << reg2position)
    elif instype == 3:                                      # ld,st type
       token2 = tokens[2]
+      print(token2)
       if token2.isdigit():
+         print(tokens[2])
          memaddr = int( tokens[2] )
       else:
          memaddr = symboltable[ token2 ] 

@@ -4,10 +4,10 @@
        ldi  3 .vals     ; r3 points to first value
        ldi  1 0       ; r1 contains sum
 .loop  add  1 *3      ; r1 = r1 + next array value
-       ;inc  3
-       adi 3 1
-       ;dec  2
-       adi 2 -1
+      inc  3
+;       adi 3 1
+      dec  2
+;       adi 2 -1
        bnz  2 .loop
        sys  1 16
        dw   0 
