@@ -89,7 +89,7 @@ def trap ( t ):
     elif ( t == 2 ):                          # sys call, reg trapval has a parameter
        what = reg[ trapval ] 
        if ( what == 1 ):
-           a = t        #elapsed time Not Sure as of Now
+           a = 1        #elapsed time Not Sure as of Now
     return ( -1, -1 )
     return ( rv, rl )
 # opcode type (1 reg, 2 reg, reg+addr, immed), mnemonic  
