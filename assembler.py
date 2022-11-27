@@ -127,10 +127,11 @@ for line in infile.readlines():           # read our asm code
       memdata = memdata + ( regval( tokens[1] ) << reg1position ) + ( regval( tokens[2] ) << reg2position)
    elif instype == 3:                                      # ld,st type
       token2 = tokens[2]
-      print(token2)
-      if token2.isdigit():
-         print(tokens[2])
+      if token2[0]=="*":
+         memdata=(regval(tokens[1])<<reg1position)+(regval(tokens[2])<<reg2position)+memdata
+      elif token2.isdigit():
          memaddr = int( tokens[2] )
+         memdata=(regval(tokens[1])<<reg1position)+memdata+memdata
       else:
          memaddr = symboltable[ token2 ] 
       memdata = memdata + ( regval( tokens[1] ) << reg1position ) + memaddr
