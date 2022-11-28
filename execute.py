@@ -1,9 +1,9 @@
 #! python
 # (c) DL, UTA, 2000's - 2022
 import  sys, string, time
-wordsize = 24                                        # everything is a word
+wordsize = 31                                        # everything is a word
 numregbits = 3                                       # actually +1, msb is indirect bit
-opcodesize = 5
+opcodesize = 7
 addrsize = wordsize - (opcodesize+numregbits+1)      # num bits in address
 memloadsize = 1024                                   # change this for larger programs
 numregs = 2**numregbits
@@ -50,6 +50,17 @@ def getdatamem ( a ):
     # get code memory at this address
     memval = mem[ a + reg[ dataseg ] ]
     return ( memval )
+
+
+
+def setdatamem ( memval, a ):
+    mem[ a + reg[ dataseg ] ] = memval
+def getaddr ( r, addr ) :
+    if ( (r & (1<<numregbits)) == 0 ):               # not indirect
+        rval = addr
+    else:
+        rval = reg[ r - numregs ]
+    return ( rval )                             
 def getregval ( r ):
     # get reg or indirect value
     if ( (r & (1<<numregbits)) == 0 ):               # not indirect
@@ -89,7 +100,7 @@ def trap ( t ):
     elif ( t == 2 ):                          # sys call, reg trapval has a parameter
        what = reg[ trapval ] 
        if ( what == 1 ):
-           a = 1        #elapsed time Not Sure as of Now
+           a = 1        #elapsed time  Need to be passed only
     return ( -1, -1 )
     return ( rv, rl )
 # opcode type (1 reg, 2 reg, reg+addr, immed), mnemonic  
@@ -105,6 +116,7 @@ ip = 0                                              # start execution at codeseg
 # while instruction is not halt
 while( 1 ):
    ir = getcodemem( ip )                            # - fetch
+   clock += 4                       
    ip = ip + 1
    opcode = ir >> opcposition                       # - decode
    reg1   = (ir >> reg1position) & regmask
@@ -112,7 +124,7 @@ while( 1 ):
    addr   = (ir) & addmask
    ic = ic + 1
 
-                                                    # - operand fetch
+   clock += 1                                                 # - operand fetch
    if not (opcodes.get(opcode)):
       tval, treg = trap(0) 
       if (tval == -1):                              # illegal instruction
@@ -125,7 +137,7 @@ while( 1 ):
       operand2 = getregval( reg2 )
    elif opcodes[ opcode ] [0] == 3:                 #     ld, st, br type
       operand1 = getregval( reg1 )                  #       fetch operands
-      operand2 = addr                     
+      operand2 = getaddr ( reg2, addr )                     
    elif opcodes[ opcode ] [0] == 0:                 #     ? type
       break
    if (opcode == 7):                                # get data memory for loads
@@ -149,6 +161,8 @@ while( 1 ):
       result = operand1 + 1
    elif opcode == 7:                   # load
       result = memdata
+   elif opcode == 8:
+       setdatamem(operand1, operand2)  # store operand1 at operand2 mem address               
    elif opcode == 9:                   # load immediate
       result = operand2
    elif opcode == 12:                  # conditional branch

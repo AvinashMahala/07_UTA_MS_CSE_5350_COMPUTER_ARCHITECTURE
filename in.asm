@@ -1,21 +1,28 @@
-; sum an array
-       go   0
-0      ld   2 .count     ; r2 has value of counter
-       ldi  3 .vals     ; r3 points to first value
-       ldi  1 0       ; r1 contains sum
-.loop  add  1 *3      ; r1 = r1 + next array value
-      inc  3
-;       adi 3 1
-      dec  2
-;       adi 2 -1
-       bnz  2 .loop
-       sys  1 16
-       dw   0 
-.count dw   5
-.vals  dw   3
-       dw   2
-       dw   0
-       dw   8
-       dw   100
-16     dw   0
-       end
+; Adding two 1 x N vectors
+        go   0
+0       ld   2	.count
+	ldi  3	.list1
+        ldi  4	.list2
+        ldi  5	.result
+.loop	ld   1  *3
+        add  1  *4
+        st   1  *5
+        inc  3 
+        inc  4
+        inc  5 
+        dec  2
+        st   1 *5
+        bnz  2  .loop
+        sys  1  18
+.count  dw   3
+.list1  dw   1
+        dw   2
+        dw   3
+.list2  dw   4
+        dw   5
+        dw   6
+.result dw   0
+        dw   0
+        dw   0
+56      dw   0
+        end
