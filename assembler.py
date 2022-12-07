@@ -70,7 +70,7 @@ for line in infile.readlines():           # read our asm code
       print("LoopCount:-->"+str(loopCount))
       loopCount+=1
    curaddr = curaddr + 1
-print( "start symbol table" ) 
+print( "start symbol table" )
 print(symboltable)
 print("------------------symboltable---END------------------")
 print("------------------symboltable---END------------------")
